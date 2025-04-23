@@ -1,3 +1,23 @@
 .container {
   padding: 30px 0;
 }
+
+.nav {
+  display: flex;
+  justify-content: center;
+  column-gap: 50px;
+
+  &_link {
+    font-size: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    &_active {
+      color: var(--light-blue);
+
+      &:hover {
+        color: var(--light-blue);
+      }
+    }
+  }
+}
