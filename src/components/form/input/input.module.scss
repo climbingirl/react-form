@@ -1,0 +1,17 @@
+@import '../../../assets/styles/mixins.scss';
+
+.control {
+  min-height: 95px;
+}
+
+.label {
+  @include label;
+}
+
+.item {
+  @include input;
+}
+
+.error {
+  @include error;
+}

@@ -1,0 +1,21 @@
+.item {
+  height: 40px;
+  width: 100%;
+  background-color: var(--light-green);
+  text-transform: uppercase;
+  color: var(--dark-blue);
+  border: none;
+  border-radius: 5px;
+  box-shadow: var(--light-sadow);
+  font-size: 18px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--medium-green);
+  }
+
+  &:disabled {
+    background-color: var(--pale-red);
+    cursor: auto;
+  }
+}
