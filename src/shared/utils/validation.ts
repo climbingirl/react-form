@@ -1,5 +1,5 @@
 import { RegistrationFormState } from '../types/form';
-
+import * as yup from 'yup';
 export interface ValidationRule {
   regex: RegExp;
   error: string;
@@ -43,3 +43,15 @@ export const validateField = (
       return undefined;
   }
 };
+
+export const registrationShema = yup.object().shape({
+  email: yup.string().email(emailValidationRule.error).required('Email is required'),
+  password: yup
+    .string()
+    .required('Password is required')
+    .matches(passwordValidationRule.regex, passwordValidationRule.error),
+  confirmPassword: yup
+    .string()
+    .required('Password is required')
+    .oneOf([yup.ref('password')], 'Passwords must match'),
+});
