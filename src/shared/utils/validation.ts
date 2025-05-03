@@ -5,43 +5,39 @@ export interface ValidationRule {
   error: string;
 }
 
-export const emailValidationRule: ValidationRule = {
+const emailValidationRule: ValidationRule = {
   regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  error: 'Incorrect email. Example of correct format: user@example.com',
+  error: 'Incorrect email',
 };
 
-export const passwordValidationRule: ValidationRule = {
+const passwordValidationRule: ValidationRule = {
   regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
   error:
-    'Weak password. It must contain at least 8 characters, including numeric, uppercase and lowercase letters, and special character',
+    'Password must contain at least 8 characters, including numeric, uppercase and lowercase letters, and special character',
+};
+
+const validationRules: Record<keyof RegistrationFormState, ValidationRule | null> = {
+  email: emailValidationRule,
+  password: passwordValidationRule,
+  passcheck: null,
 };
 
 export const validateField = (
   field: keyof RegistrationFormState,
-  vals: RegistrationFormState
-): string | undefined => {
-  const value = vals[field].trim();
+  value: string,
+  allValues: RegistrationFormState
+): string | null => {
+  const rule = validationRules[field];
 
-  switch (field) {
-    case 'email':
-      if (!value) return undefined;
-      if (!emailValidationRule.regex.test(vals.email)) return emailValidationRule.error;
-      return undefined;
-
-    case 'password':
-      if (!value) return undefined;
-      if (!passwordValidationRule.regex.test(vals.password))
-        return passwordValidationRule.error;
-      return undefined;
-
-    case 'confirmPassword':
-      if (!value) return undefined;
-      if (vals.confirmPassword !== vals.password) return 'Passwords must match';
-      return undefined;
-
-    default:
-      return undefined;
+  if (rule && !rule.regex.test(value)) {
+    return rule.error;
   }
+
+  if (field === 'passcheck' && value !== allValues.password) {
+    return 'Passwords must match';
+  }
+
+  return null;
 };
 
 export const registrationShema = yup.object().shape({
@@ -50,7 +46,7 @@ export const registrationShema = yup.object().shape({
     .string()
     .required('Password is required')
     .matches(passwordValidationRule.regex, passwordValidationRule.error),
-  confirmPassword: yup
+  passcheck: yup
     .string()
     .required('Password is required')
     .oneOf([yup.ref('password')], 'Passwords must match'),

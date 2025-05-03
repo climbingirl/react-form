@@ -1,20 +1,31 @@
 import Form from '../../components/form/form';
 import Input from '../../components/form/input/input';
 import ButtonSubmit from '../../components/form/buttonSubmit/buttonSubmit';
-import { RegistrationFormState } from '../../shared/types/form';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { registrationShema } from '../../shared/utils/validation';
 
+export interface RegistrationFormState {
+  email: string;
+  password: string;
+  passcheck: string;
+}
+
 const RegistrationHookForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    trigger,
+    formState: { touchedFields, errors, isValid },
   } = useForm<RegistrationFormState>({
-    mode: 'onChange',
+    mode: 'onTouched',
     resolver: yupResolver(registrationShema),
+    defaultValues: {
+      email: '',
+      password: '',
+      passcheck: '',
+    },
   });
 
   const submitButtonRef = useRef<HTMLButtonElement>(null);
@@ -26,9 +37,7 @@ const RegistrationHookForm = () => {
   }, [isValid]);
 
   const onSubmit = (values: RegistrationFormState) => {
-    if (isValid) {
-      console.log('Submitted values:', values);
-    }
+    console.log('Submitted values:', values);
   };
 
   return (
@@ -42,15 +51,19 @@ const RegistrationHookForm = () => {
         />
         <Input
           label="Password"
-          {...register('password')}
+          {...register('password', {
+            onChange: () => touchedFields.passcheck && trigger('passcheck'),
+          })}
           placeholder="Enter password"
+          type="password"
           error={errors.password?.message}
         />
         <Input
           label="Confirm password"
-          {...register('confirmPassword')}
+          {...register('passcheck')}
+          type="password"
           placeholder="Enter password"
-          error={errors.confirmPassword?.message}
+          error={errors.passcheck?.message}
         />
         <ButtonSubmit disabled={!isValid} ref={submitButtonRef}>
           Submit

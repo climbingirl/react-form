@@ -3,11 +3,11 @@ import styles from './input.module.scss';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  error?: string;
+  error?: string | null;
   name: string;
 }
 
-const Input = ({ label, error, name, type = 'text', onChange, ...rest }: InputProps) => {
+const Input = ({ label, error, name, type = 'text', ...rest }: InputProps) => {
   return (
     <div className={styles.control}>
       {label && (
@@ -15,14 +15,7 @@ const Input = ({ label, error, name, type = 'text', onChange, ...rest }: InputPr
           {label}
         </label>
       )}
-      <input
-        className={styles.item}
-        id={name}
-        name={name}
-        type={type}
-        onChange={(e) => onChange?.(e)}
-        {...rest}
-      />
+      <input className={styles.item} id={name} name={name} type={type} {...rest} />
       {error && <div className={styles.error}>{error}</div>}
     </div>
   );
